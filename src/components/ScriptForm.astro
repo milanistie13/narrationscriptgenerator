@@ -1,0 +1,185 @@
+---
+---
+<form id="scriptForm" class="space-y-6 max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+  <div>
+    <label for="productType" class="block text-sm font-medium text-gray-700">Product Type</label>
+    <input type="text" id="productType" name="productType" required
+      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+      placeholder="e.g., stevia, skincare, fitness equipment">
+  </div>
+
+  <div>
+    <label for="brandName" class="block text-sm font-medium text-gray-700">Brand Name</label>
+    <input type="text" id="brandName" name="brandName" required
+      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+      placeholder="e.g., SteviaPlus, GlowSkin">
+  </div>
+
+  <div>
+    <label for="usp" class="block text-sm font-medium text-gray-700">Unique Selling Point (USP)</label>
+    <input type="text" id="usp" name="usp" required
+      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+      placeholder="e.g., 100% organic, long-lasting">
+  </div>
+
+  <div>
+    <label for="targetMarket" class="block text-sm font-medium text-gray-700">Target Market</label>
+    <input type="text" id="targetMarket" name="targetMarket" required
+      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+      placeholder="e.g., health-conscious individuals">
+  </div>
+
+  <div>
+    <label for="wordLimit" class="block text-sm font-medium text-gray-700">Word Limit</label>
+    <input type="number" id="wordLimit" name="wordLimit" required min="50" max="500"
+      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+      placeholder="150">
+  </div>
+
+  <div>
+    <label class="block text-sm font-medium text-gray-700">Narration Type</label>
+    <div class="mt-2 space-x-4">
+      <label class="inline-flex items-center">
+        <input type="radio" name="narrationType" value="storytelling" checked
+          class="form-radio text-indigo-600">
+        <span class="ml-2">Storytelling</span>
+      </label>
+      <label class="inline-flex items-center">
+        <input type="radio" name="narrationType" value="promotional"
+          class="form-radio text-indigo-600">
+        <span class="ml-2">Promotional</span>
+      </label>
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-sm font-medium text-gray-700">Tone</label>
+    <div class="mt-2 space-x-4">
+      <label class="inline-flex items-center">
+        <input type="radio" name="tone" value="casual" checked
+          class="form-radio text-indigo-600">
+        <span class="ml-2">Casual</span>
+      </label>
+      <label class="inline-flex items-center">
+        <input type="radio" name="tone" value="friendly"
+          class="form-radio text-indigo-600">
+        <span class="ml-2">Friendly</span>
+      </label>
+    </div>
+  </div>
+
+  <button type="submit"
+    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+    Generate Script
+  </button>
+</form>
+
+<div id="result" class="mt-8 max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg hidden">
+  <h3 class="text-lg font-medium text-gray-900 mb-4">Generated Script</h3>
+  <div id="scriptContent" class="prose max-w-none"></div>
+</div>
+
+<div id="error" class="mt-4 max-w-2xl mx-auto p-4 bg-red-50 rounded-lg shadow hidden">
+  <div class="flex">
+    <div class="flex-shrink-0">
+      <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+    <div class="ml-3">
+      <h3 class="text-sm font-medium text-red-800" id="errorMessage">Error generating script</h3>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { GoogleGenerativeAI } from '@google/generative-ai';
+
+  const genAI = new GoogleGenerativeAI('AIzaSyDctT-2iby2A713YQR-vqbMEshaU-Q9Y6g');
+
+  async function generateContent(formData) {
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+      let prompt = formData.get('narrationType') === 'storytelling' 
+        ? `Saya ingin mempromosikan produk ${formData.get('productType')} merek ${formData.get('brandName')} kepada ${formData.get('targetMarket')} melalui video singkat. Saya membutuhkan naskah narasi yang menjual, menarik dan meyakinkan.
+
+Tolong baca dan pahami 6 teknik storytelling di bawah ini:
+
+*   **The Dance**: The video recommends creating a "dance" between context and conflict to keep viewers engaged. Context provides information about the characters and their mission, while conflict introduces obstacles and challenges. This back-and-forth between context and conflict creates open loops in the viewer's brain, keeping them hooked until the loops are closed with resolution. Matt Stone and Trey Parker, creators of South Park, suggest using the words "therefore" and "but" to connect these beats in an outline or script. Using "and then" can lead to a monotonous piling of details.
+*   **Rhythm**: The video emphasizes the importance of a natural and soothing rhythm in storytelling. Using a variety of sentence lengths and syllable combinations creates an unpredictable rhythm that keeps viewers engaged. The video warns against monotonous predictability caused by sentences of the same length, which can lead viewers to lose interest. It suggests writing each sentence on a separate line in a script document to visually check for rhythmic diversity.
+*   **Tone**: The video highlights the effectiveness of a conversational tone in content creation. Successful creators like Emma Chamberlain, Casey Neistat, and Steve Jobs employ a conversational style that makes viewers feel like they are part of a personal conversation. This breaks down the conscious barrier of personal identity and allows viewers to engage more deeply with the content. The video recommends writing and filming videos as if talking to a close friend.
+*   **Direction**: The video suggests starting a story with the end in mind and working backwards. Knowing the desired outcome helps to structure the narrative and build conflict towards a satisfying resolution. This approach is likened to a baseball game, where the ninth hitter sets the stage for the top of the order.  The last line of the script should be memorable and create a loop that connects back to the beginning. Christopher Nolan's films are cited as examples of complex plots that were likely developed by working backwards from the ending.
+*   **Story Lenses**: The video introduces the concept of "story lenses" to create unique content for social media. A story lens is a unique angle or perspective on a topic that differentiates it from other content on the same subject. Using a story lens allows creators to offer fresh insights and stand out from the crowd. The video uses the example of Taylor Swift's Super Bowl appearance, suggesting various lenses such as her outfit, her arrival time, her reactions, predictions about the performance, and the business impact of her presence.
+*   **Hook**: The video emphasizes the importance of a strong hook to capture viewer attention. The first line should be punchy and indicative of the video's plot. Vague or generic openings like "wait till you see this" are discouraged. The video stresses that visual hooks are more effective than audio-only hooks. Visuals should complement the spoken words to provide a faster and more engaging experience for viewers. Kevin from Epic Gardening is cited as an example of effectively using visual hooks by immediately showing relevant imagery.
+
+Tolong buatkan naskah narasi maksimal ${formData.get('wordLimit')} kata menggunakan 6 teknik di atas.`
+        : `Saya ingin mempromosikan sebuah produk ${formData.get('productType')} kepada ${formData.get('targetMarket')} lewat video pendek. Kelebihan produk ini yang tidak dimiliki kompetitor adalah ${formData.get('usp')}. Nama brand: ${formData.get('brandName')}.
+
+Objektif naskah narasi video pendek ini adalah untuk menjual produk ini sebanyak-banyaknya.
+
+Tolong tuliskan naskah narasi video pendek yang sangat menjual, menarik dan meyakinkan maksimal ${formData.get('wordLimit')} kata.`;
+
+      // Add tone-specific prompt
+      if (formData.get('tone') === 'casual') {
+        prompt += ' gunakan gaya bahasa yang santai dan kasual.';
+      } else if (formData.get('tone') === 'friendly') {
+        prompt += ' gunakan gaya bahasa yang bersahabat, seperti seolah-olah sedang berbicara langsung kepada calon pembeli';
+      }
+
+      prompt += ' tulis dalam bentuk paragraf utuh tanpa penjelasan atau keterangan apapun.';
+
+      const result = await model.generateContent(prompt);
+      if (!result || !result.response) {
+        throw new Error('Invalid response from AI model');
+      }
+      const response = await result.response;
+      return response.text();
+    } catch (error) {
+      console.error('Detailed error:', error);
+      throw new Error(error.message || 'Failed to generate script. Please try again.');
+    }
+  }
+
+  document.getElementById('scriptForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Reset UI state
+    document.getElementById('error').classList.add('hidden');
+    document.getElementById('result').classList.add('hidden');
+    
+    const form = e.target;
+    const formData = new FormData(form);
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    
+    // Validate form data
+    for (const [key, value] of formData.entries()) {
+      if (!value || value.trim() === '') {
+        document.getElementById('errorMessage').textContent = `Please fill in the ${key} field`;
+        document.getElementById('error').classList.remove('hidden');
+        return;
+      }
+    }
+    
+    // Update button state
+    submitButton.textContent = 'Generating...';
+    submitButton.disabled = true;
+
+    try {
+      const generatedScript = await generateContent(formData);
+      if (!generatedScript || generatedScript.trim() === '') {
+        throw new Error('Generated script is empty');
+      }
+      document.getElementById('scriptContent').textContent = generatedScript;
+      document.getElementById('result').classList.remove('hidden');
+    } catch (error) {
+      console.error('Error generating script:', error);
+      document.getElementById('errorMessage').textContent = error.message || 'Error generating script. Please try again.';
+      document.getElementById('error').classList.remove('hidden');
+    } finally {
+      submitButton.textContent = originalButtonText;
+      submitButton.disabled = false;
+    }
+  });
+</script>
